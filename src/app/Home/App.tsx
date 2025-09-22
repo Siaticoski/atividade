@@ -2,22 +2,17 @@ import { StatusBar } from 'expo-status-bar';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { StyleSheet, Text, TextInput, View, TouchableOpacity, ListRenderItem, FlatList} from 'react-native';
 import { useState } from 'react';
+
+
 type Produto = {
   id: string,
   nome: string,
   comprado: boolean,
 };
 
-
-
-
 export default function App() {
   const [produto, setProduto] = useState<string>('');
-  const [lista, setLista] = useState<Produto[]>([
-    {id: '1', nome: 'Maça', comprado: true},
-    {id: '2', nome: 'Banana', comprado: true},
-    {id: '3', nome: 'Melancia', comprado:true},
-  ]);
+  const [lista, setLista] = useState<Produto[]>([]);
 
   const adicionarProduto = () => {
     if (produto.trim() === '') return; {
@@ -27,7 +22,6 @@ export default function App() {
         nome: produto,
         comprado: false,
       };
-
       setLista([...lista, novoProduto]);
       setProduto('');
     };
@@ -38,17 +32,28 @@ export default function App() {
       item.id === id ? { ...item, comprado: !item.comprado} : item
     );
     setLista(novaLista);
-      
+  }
+
+  const Remover = (id: string) => {
+    const novaLista = lista.filter((item) => item.id !== id)
+    setLista(novaLista)
   }
 
   const rederItem: ListRenderItem<Produto> = ({item}) => (
-    <TouchableOpacity style={styles.alinhar} onPress={() => alternarProduto(item.id)}>
+    <View style={styles.tabela}>
+    <TouchableOpacity onPress={() => alternarProduto(item.id)}>
       <AntDesign name="checkcircle" size={30} color="black" />
-      <Text style = {styles.produtos}>{item.nome}</Text>
     </TouchableOpacity>
 
+    <Text style={styles.cor}>{item.nome}</Text>
+
+    <TouchableOpacity onPress={() => Remover(item.id)}>
+      <AntDesign name="delete" size={30} color="red" />
+    </TouchableOpacity>
+    </View> 
   )
 
+  
   return (
     <View style={styles.container}>
       
@@ -65,6 +70,7 @@ export default function App() {
           <TouchableOpacity style={styles.plus} onPress={adicionarProduto}>
             <AntDesign  name="pluscircleo" size={40} color="#9400D3" />
           </TouchableOpacity>
+          
         </View>
       </View>
 
@@ -88,7 +94,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     flexDirection: 'column',
     paddingTop: 50,
-    gap: 10
+    gap: 10,
+    
   },
   texto:{
     fontSize: 30,
@@ -121,25 +128,32 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   lista:{
-    borderColor: 'black',
     alignItems: 'center',
     marginTop: 20,
     borderWidth: 2,
     borderBlockColor: 'black',
     borderRadius: 10,
     height: '80%',
-    padding: 10
+    width: '95%',
+    padding: 10,
   },
-  alinhar:{
-    flexDirection: 'row',
-    gap: 10,
-    alignItems: 'center',
+  tabela:{
     borderBottomColor: 'black',
     borderBottomWidth: 2,
+    alignItems: 'center',
+    gap: 10,
     width: 370,
-    paddingLeft: 10
+    paddingLeft: 10,
+    paddingRight: 10,
+    marginBottom: '3%', 
+    flexDirection: 'row',
+    justifyContent: 'space-between'
   },
   produtos:{
+    color: 'white',
+    fontSize: 30,
+  },
+  cor:{
     color: 'white',
     fontSize: 30,
   }
